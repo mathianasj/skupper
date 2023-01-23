@@ -2,6 +2,7 @@ package tools
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -68,7 +69,7 @@ func Curl(kubeClient kubernetes.Interface, config *restclient.Config, ns, podNam
 
 	if podName == "" {
 		// If podName not provided try running against the skupper-controller podName
-		podList, err := kubeClient.CoreV1().Pods(ns).List(metav1.ListOptions{
+		podList, err := kubeClient.CoreV1().Pods(ns).List(context.TODO(), metav1.ListOptions{
 			LabelSelector: "skupper.io/component=service-controller",
 			Limit:         1,
 		})
@@ -83,7 +84,7 @@ func Curl(kubeClient kubernetes.Interface, config *restclient.Config, ns, podNam
 		pod = &podList.Items[0]
 	} else {
 		// Retrieving the given pod
-		pod, err = kubeClient.CoreV1().Pods(ns).Get(podName, metav1.GetOptions{})
+		pod, err = kubeClient.CoreV1().Pods(ns).Get(context.TODO(), podName, metav1.GetOptions{})
 		if err != nil {
 			log.Printf("unable to find pod: %s", podName)
 			return response, err
@@ -188,7 +189,7 @@ func Curl(kubeClient kubernetes.Interface, config *restclient.Config, ns, podNam
 // you must wait for it to be ready
 func DeployCurl(kubeClient kubernetes.Interface, ns, pod string) (*v1.Pod, error) {
 	terminationPeriodSecs := int64(30)
-	return kubeClient.CoreV1().Pods(ns).Create(&v1.Pod{
+	return kubeClient.CoreV1().Pods(ns).Create(context.TODO(), &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   pod,
 			Labels: map[string]string{"app": "curl"},
@@ -200,5 +201,5 @@ func DeployCurl(kubeClient kubernetes.Interface, ns, pod string) (*v1.Pod, error
 			RestartPolicy:                 v1.RestartPolicyAlways,
 			TerminationGracePeriodSeconds: &terminationPeriodSecs,
 		},
-	})
+	}, metav1.CreateOptions{})
 }

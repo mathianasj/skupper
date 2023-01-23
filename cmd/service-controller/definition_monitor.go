@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	jsonencoding "encoding/json"
 	"fmt"
 	"reflect"
@@ -11,6 +12,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -589,7 +591,7 @@ func (m *DefinitionMonitor) restoreServiceDefinitions(service *corev1.Service) e
 		delete(service.ObjectMeta.Annotations, types.OriginalAssignedQualifier)
 	}
 	if updated {
-		_, err := m.vanClient.KubeClient.CoreV1().Services(m.vanClient.Namespace).Update(service)
+		_, err := m.vanClient.KubeClient.CoreV1().Services(m.vanClient.Namespace).Update(context.TODO(), service, metav1.UpdateOptions{})
 		return err
 	}
 	return nil

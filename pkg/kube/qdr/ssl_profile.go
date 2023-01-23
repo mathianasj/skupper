@@ -1,9 +1,12 @@
 package qdr
 
 import (
+	"context"
+
 	"github.com/skupperproject/skupper/api/types"
 	"github.com/skupperproject/skupper/pkg/kube"
 	"github.com/skupperproject/skupper/pkg/qdr"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -28,7 +31,7 @@ func AddSslProfile(secretName string, namespace string, cli kubernetes.Interface
 		return err
 	}
 
-	_, err = cli.CoreV1().ConfigMaps(namespace).Update(configmap)
+	_, err = cli.CoreV1().ConfigMaps(namespace).Update(context.TODO(), configmap, metav1.UpdateOptions{})
 	if err != nil {
 		return err
 	}
@@ -56,7 +59,7 @@ func RemoveSslProfile(secretName string, namespace string, cli kubernetes.Interf
 		return err
 	}
 
-	_, err = cli.CoreV1().ConfigMaps(namespace).Update(configmap)
+	_, err = cli.CoreV1().ConfigMaps(namespace).Update(context.TODO(), configmap, metav1.UpdateOptions{})
 	if err != nil {
 		return err
 	}

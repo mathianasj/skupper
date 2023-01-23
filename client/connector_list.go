@@ -60,7 +60,7 @@ func (cli *VanClient) getRouterConfig() (*qdr.RouterConfig, error) {
 
 func (cli *VanClient) ConnectorList(ctx context.Context) ([]types.LinkStatus, error) {
 	var links []types.LinkStatus
-	secrets, err := cli.KubeClient.CoreV1().Secrets(cli.Namespace).List(metav1.ListOptions{LabelSelector: "skupper.io/type in (connection-token, token-claim)"})
+	secrets, err := cli.KubeClient.CoreV1().Secrets(cli.Namespace).List(ctx, metav1.ListOptions{LabelSelector: "skupper.io/type in (connection-token, token-claim)"})
 	if err != nil {
 		return links, err
 	}
@@ -78,7 +78,7 @@ func (cli *VanClient) ConnectorList(ctx context.Context) ([]types.LinkStatus, er
 
 func GetLocalLinkStatus(cli *VanClient, namespace string, siteNameMap map[string]string) (map[string]*types.LinkStatus, error) {
 	mapLinks := make(map[string]*types.LinkStatus)
-	secrets, err := cli.KubeClient.CoreV1().Secrets(namespace).List(metav1.ListOptions{LabelSelector: "skupper.io/type in (connection-token, token-claim)"})
+	secrets, err := cli.KubeClient.CoreV1().Secrets(namespace).List(context.TODO(), metav1.ListOptions{LabelSelector: "skupper.io/type in (connection-token, token-claim)"})
 	if err != nil {
 		return nil, err
 	}
