@@ -118,6 +118,13 @@ func (cli *VanClient) SiteConfigInspectInNamespace(ctx context.Context, input *c
 	if ingressAnnotations, ok := siteConfig.Data[SiteConfigIngressAnnotationsKey]; ok {
 		result.Spec.IngressAnnotations = asMap(splitWithEscaping(ingressAnnotations, ',', '\\'))
 	}
+	if enableNodePorts, ok := siteConfig.Data[SiteConfigRouterExposeNodePorts]; ok {
+		if enableNodePorts == "true" {
+			result.Spec.EnableNodePorts = true
+		} else {
+			result.Spec.EnableNodePorts = false
+		}
+	}
 	if consoleIngress, ok := siteConfig.Data[SiteConfigConsoleIngressKey]; ok {
 		result.Spec.ConsoleIngress = consoleIngress
 	}

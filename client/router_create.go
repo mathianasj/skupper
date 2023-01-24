@@ -238,8 +238,10 @@ func (cli *VanClient) GetVanControllerSpec(options types.SiteConfigSpec, van *ty
 	van.Controller.ClusterRoleBindings = ClusterRoleBindings(van.Namespace)
 
 	svctype := corev1.ServiceTypeClusterIP
+	exposeNodePorts := true
 	if options.IsConsoleIngressLoadBalancer() {
 		svctype = corev1.ServiceTypeLoadBalancer
+		exposeNodePorts = options.EnableNodePorts
 	} else if options.IsConsoleIngressNodePort() {
 		svctype = corev1.ServiceTypeNodePort
 	}
@@ -384,6 +386,10 @@ func (cli *VanClient) GetVanControllerSpec(options types.SiteConfigSpec, van *ty
 				Ports:    controllerPorts,
 				Type:     svctype,
 			},
+		}
+
+		if svctype == corev1.ServiceTypeLoadBalancer {
+			svc.Spec.AllocateLoadBalancerNodePorts = &exposeNodePorts
 		}
 
 		if options.Controller.LoadBalancerIp != "" && svctype == corev1.ServiceTypeLoadBalancer {
@@ -874,8 +880,10 @@ func (cli *VanClient) GetRouterSpecFromOpts(options types.SiteConfigSpec, siteId
 	})
 	if !isEdge {
 		svcType := corev1.ServiceTypeClusterIP
+		exposeNodePorts := true
 		if options.IsIngressLoadBalancer() {
 			svcType = corev1.ServiceTypeLoadBalancer
+			exposeNodePorts = options.EnableNodePorts
 		} else if options.IsIngressNodePort() {
 			svcType = corev1.ServiceTypeNodePort
 		}
@@ -907,6 +915,10 @@ func (cli *VanClient) GetRouterSpecFromOpts(options types.SiteConfigSpec, siteId
 				},
 				Type: svcType,
 			},
+		}
+
+		if svcType == corev1.ServiceTypeLoadBalancer {
+			svc.Spec.AllocateLoadBalancerNodePorts = &exposeNodePorts
 		}
 
 		if options.Router.LoadBalancerIp != "" && svcType == corev1.ServiceTypeLoadBalancer {

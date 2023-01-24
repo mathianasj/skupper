@@ -58,6 +58,7 @@ func (s *SkupperKubeSite) Create(cmd *cobra.Command, args []string) error {
 	routerCreateOpts.Annotations = asMap(s.kubeInit.annotations)
 	routerCreateOpts.Labels = asMap(initFlags.labels)
 	routerCreateOpts.IngressAnnotations = asMap(s.kubeInit.ingressAnnotations)
+	routerCreateOpts.EnableNodePorts = s.kubeInit.routerExposeNodePorts
 	routerCreateOpts.Router.ServiceAnnotations = asMap(s.kubeInit.routerServiceAnnotations)
 	routerCreateOpts.Router.MaxFrameSize = types.RouterMaxFrameSizeDefault
 	routerCreateOpts.Router.MaxSessionFrames = types.RouterMaxSessionFramesDefault
@@ -139,6 +140,7 @@ func (s *SkupperKubeSite) CreateFlags(cmd *cobra.Command) {
 	cmd.Flags().StringSliceVar(&s.kubeInit.ingressAnnotations, "ingress-annotations", []string{}, "Annotations to add to skupper ingress")
 	cmd.Flags().StringSliceVar(&s.kubeInit.annotations, "annotations", []string{}, "Annotations to add to skupper pods")
 	cmd.Flags().StringSliceVar(&s.kubeInit.routerServiceAnnotations, "router-service-annotations", []string{}, "Annotations to add to skupper router service")
+	cmd.Flags().BoolVarP(&s.kubeInit.routerExposeNodePorts, "router-service-expose-nodeports", "", true, "Enable router service node ports")
 	cmd.Flags().StringSliceVar(&s.kubeInit.controllerServiceAnnotations, "controller-service-annotation", []string{}, "Annotations to add to skupper controller service")
 	cmd.Flags().BoolVarP(&routerCreateOpts.EnableServiceSync, "enable-service-sync", "", true, "Participate in cross-site service synchronization")
 	cmd.Flags().BoolVarP(&routerCreateOpts.EnableFlowCollector, "enable-vflow-collector", "", false, "Enable cross-site vFlow collection for the application network")

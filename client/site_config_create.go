@@ -53,6 +53,7 @@ const (
 	SiteConfigRouterMaxSessionFramesKey   string = "xp-router-max-session-frames"
 	SiteConfigRouterIngressHostKey        string = "router-ingress-host"
 	SiteConfigRouterServiceAnnotationsKey string = "router-service-annotations"
+	SiteConfigRouterExposeNodePorts       string = "router-expose-nodeports"
 	SiteConfigRouterLoadBalancerIp        string = "router-load-balancer-ip"
 
 	// controller options
@@ -96,6 +97,7 @@ func (cli *VanClient) SiteConfigCreate(ctx context.Context, spec types.SiteConfi
 			SiteConfigFlowCollectorKey:         "true",
 			SiteConfigRouterConsoleKey:         "false",
 			SiteConfigRouterLoggingKey:         "",
+			SiteConfigRouterExposeNodePorts:    "true",
 			SiteConfigConsoleAuthenticationKey: types.ConsoleAuthModeInternal,
 			SiteConfigConsoleUserKey:           "",
 			SiteConfigConsolePasswordKey:       "",
@@ -122,6 +124,9 @@ func (cli *VanClient) SiteConfigCreate(ctx context.Context, spec types.SiteConfi
 	}
 	if !spec.EnableFlowCollector {
 		siteConfig.Data[SiteConfigFlowCollectorKey] = "false"
+	}
+	if !spec.EnableNodePorts {
+		siteConfig.Data[SiteConfigRouterExposeNodePorts] = "false"
 	}
 	if spec.AuthMode != "" {
 		siteConfig.Data[SiteConfigConsoleAuthenticationKey] = spec.AuthMode

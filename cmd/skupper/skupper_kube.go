@@ -87,6 +87,7 @@ type kubeInit struct {
 	ingressAnnotations           []string
 	routerServiceAnnotations     []string
 	controllerServiceAnnotations []string
+	routerExposeNodePorts        bool
 }
 
 func (s *SkupperKube) NewClient(cmd *cobra.Command, args []string) {

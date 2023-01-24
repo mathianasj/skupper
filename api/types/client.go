@@ -90,6 +90,7 @@ type SiteConfigSpec struct {
 	EnableServiceSync   bool
 	EnableConsole       bool
 	EnableFlowCollector bool
+	EnableNodePorts     bool
 	AuthMode            string
 	User                string
 	Password            string
